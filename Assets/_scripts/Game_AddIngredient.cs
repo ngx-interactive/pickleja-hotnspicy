@@ -15,7 +15,7 @@ public class Game_AddIngredient : MonoBehaviour
 
     public void AddIngredient(string _ingredient)
     {
-        if (_ingredientHolder.transform.childCount < 15)
+        if (_ingredientHolder.transform.childCount < 10)
         {
             GameObject _tempGO = Instantiate(_ingredientPlaceholder, _ingredientHolder.transform);
             Image _tempImg = _tempGO.GetComponent<Image>();
