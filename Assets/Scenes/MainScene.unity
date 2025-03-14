@@ -971,6 +971,7 @@ CanvasRenderer:
   m_CullTransparentMesh: 1
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!1 &723775927
 =======
 --- !u!1 &661609739
@@ -1423,6 +1424,8 @@ CanvasRenderer:
   m_CullTransparentMesh: 1
 =======
 >>>>>>> parent of a71bfea (sidepanel buttons)
+=======
+>>>>>>> parent of a71bfea (sidepanel buttons)
 --- !u!1 &868217922
 GameObject:
   m_ObjectHideFlags: 0
@@ -1598,10 +1601,13 @@ RectTransform:
   - {fileID: 1053709169}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   - {fileID: 1228234537}
 =======
   - {fileID: 1645759275}
 >>>>>>> a71bfea1a71c4b1a9bed0f49ef5f2d90f11adb58
+=======
+>>>>>>> parent of a71bfea (sidepanel buttons)
 =======
 >>>>>>> parent of a71bfea (sidepanel buttons)
   m_Father: {fileID: 265519038}
@@ -1649,6 +1655,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 933845632}
   m_CullTransparentMesh: 1
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 --- !u!1 &955707793
@@ -1824,6 +1831,8 @@ CanvasRenderer:
   m_GameObject: {fileID: 993497242}
 >>>>>>> a71bfea1a71c4b1a9bed0f49ef5f2d90f11adb58
   m_CullTransparentMesh: 1
+=======
+>>>>>>> parent of a71bfea (sidepanel buttons)
 =======
 >>>>>>> parent of a71bfea (sidepanel buttons)
 --- !u!1 &1053709168
@@ -2170,6 +2179,7 @@ CanvasRenderer:
   m_CullTransparentMesh: 1
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!1 &1156333780
 =======
 --- !u!1 &1162777160
@@ -2406,6 +2416,8 @@ CanvasRenderer:
   m_GameObject: {fileID: 1162777160}
 >>>>>>> a71bfea1a71c4b1a9bed0f49ef5f2d90f11adb58
   m_CullTransparentMesh: 1
+=======
+>>>>>>> parent of a71bfea (sidepanel buttons)
 =======
 >>>>>>> parent of a71bfea (sidepanel buttons)
 --- !u!1 &1177608361
