@@ -1,0 +1,117 @@
+name: Build project
+
+on:
+  push:
+    branches:
+      - main
+      - qa
+jobs:
+  buildForAllSupportedPlatforms:
+    name: Build for ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-22.04-8core
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneWindows64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}
+          restore-keys: Library-
+      - if: matrix.targetPlatform == 'Android'
+        uses: jlumbroso/free-disk-space@v1.3.1
+      - if: matrix.targetPlatform == 'WebGL'
+        run: |
+          sudo swapoff -a
+          sudo rm -f /swapfile
+          sudo apt clean
+          docker rmi $(docker image ls -aq)
+          df -h
+        
+
+      - uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          versioning: Tag
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.8.1
+
+      - name: Get current date
+        id: date
+        run: echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Zip Build File
+        run: zip -qq -r build.zip build/${{ matrix.targetPlatform }}
+
+      - name: Check build file size
+        id: check_file_size
+        run: |
+          FILE_SIZE=$(stat -c%s "build.zip")
+          echo "FILE_SIZE=${FILE_SIZE}" >> $GITHUB_ENV
+
+      - name: Check if new Release Needs to Happen
+        env:
+            GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          npm install
+          CI=true GITHUB_TOKEN=$GITHUB_TOKEN npx semantic-release --dry-run > release_output.txt
+          NEW_VERSION=$(grep -oP '(?<=next release version is ).*' release_output.txt)
+          echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
+
+      - name: Semantic Release
+        if: ${{ success() }}
+        env:
+            GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+            npm install
+            CI=true GITHUB_TOKEN=$GITHUB_TOKEN npx semantic-release
+
+      - name: Set Dropbox target path
+        id: set-dropbox-path
+        run: |
+          REPO_NAME=$(echo ${{ github.repository }} | awk -F'/' '{print $2}')
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "::set-output name=target_path::/zogate_pipeline/${REPO_NAME}/prod/${REPO_NAME}_build_${{ env.CURRENT_DATE }}_${{ env.NEW_VERSION }}.zip"
+          elif [ "${{ github.ref }}" == "refs/heads/qa" ]; then
+            echo "::set-output name=target_path::/zogate_pipeline/${REPO_NAME}/qa/${REPO_NAME}_build_${{ env.CURRENT_DATE }}_${{ env.NEW_VERSION }}.zip"
+          else
+            echo "::set-output name=target_path::/zogate_pipeline/${REPO_NAME}/${REPO_NAME}_build_${{ env.CURRENT_DATE }}_${{ env.NEW_VERSION }}.zip"
+          fi
+        
+      # Conditional logic for Dropbox uploaders based on file size
+      - name: Dropbox Large File Uploader
+        if: env.FILE_SIZE > 150000000
+        uses: thedefaultman/dropbox-large-file-uploader@v2.3.5
+        with:
+          app_key: ${{ secrets.DROPBOX_APP_KEY }}
+          app_secret: ${{ secrets.DROPBOX_APP_SECRET }}
+          refresh_token: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+          file_path: build.zip
+          dropbox_path: ${{ steps.set-dropbox-path.outputs.target_path }}
+
+      - name: Upload to Dropbox
+        if: env.FILE_SIZE <= 150000000
+        uses: Lewuathe/dropbox-github-action@v1
+        with:
+          dropbox-app-key: ${{ secrets.DROPBOX_APP_KEY }}
+          dropbox-app-secret: ${{ secrets.DROPBOX_APP_SECRET }}
+          dropbox-refresh-token: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+          source-path: build.zip
+          target-path: ${{ steps.set-dropbox-path.outputs.target_path }}
+
+      - name: Return license
+        uses: game-ci/unity-return-license@v2
+        if: always()
