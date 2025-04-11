@@ -25,7 +25,7 @@ jobs:
           lfs: true
 
       - name: Setup Unity WebGL Build
-        uses: game-ci/unity-builder@v4.0.5
+        uses: game-ci/unity-builder@v4.3.0
         env:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
