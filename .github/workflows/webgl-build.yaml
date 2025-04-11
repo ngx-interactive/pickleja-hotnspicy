@@ -3,7 +3,7 @@ name: WebGL Build and Deploy to GitHub Pages
 on:
   push:
     branches:
-      - webgl
+      - webgl  # or change to whatever branch you'd like to use for WebGL builds
 
 permissions:
   contents: write
@@ -24,7 +24,7 @@ jobs:
         with:
           lfs: true
 
-      - name: Build Unity WebGL
+      - name: Setup Unity WebGL Build
         uses: game-ci/unity-builder@v4
         env:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
@@ -34,11 +34,10 @@ jobs:
           targetPlatform: WebGL
 
       - name: Upload GitHub Pages Artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: build/WebGL
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-#added new rule
