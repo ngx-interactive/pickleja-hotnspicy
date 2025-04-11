@@ -42,11 +42,6 @@ jobs:
         with:
           targetPlatform: WebGL
 
-      - name: Upload WebGL build to GitHub Pages
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: build/WebGL
-
       - name: Deploy WebGL to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
