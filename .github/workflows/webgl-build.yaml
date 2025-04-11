@@ -25,7 +25,7 @@ jobs:
           lfs: true
 
       - name: Setup Unity WebGL Build
-        uses: game-ci/unity-builder@v4.3.0
+        uses: game-ci/unity-builder@v4
         env:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -34,10 +34,10 @@ jobs:
           targetPlatform: WebGL
 
       - name: Upload GitHub Pages Artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v4
         with:
           path: build/WebGL
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
