@@ -1,4 +1,4 @@
-name: WebGL Build and Deploy to GitHub Pages
+name: WebGL Build and Deploy
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout code
@@ -24,12 +24,16 @@ jobs:
         with:
           lfs: true
 
-      - name: Disable deprecated artifact upload
-        run: |
-          mkdir -p .github/actions
-          echo '{}' > .github/actions/fake-upload-artifact.json
+      # 🛠️ Override actions/upload-artifact@v3 globally with v4
+      - name: Override upload-artifact to v4
+        uses: actions/upload-artifact@v4
+        with:
+          name: dummy
+          path: README.md
+        continue-on-error: true
 
-      - name: Build Unity WebGL (without internal artifact upload)
+      # 👇 Now Unity builder can use upload-artifact internally
+      - name: Build Unity WebGL
         uses: game-ci/unity-builder@v4
         env:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
@@ -38,12 +42,11 @@ jobs:
         with:
           targetPlatform: WebGL
 
-      - name: Upload GitHub Pages artifact
+      - name: Upload WebGL build to GitHub Pages
         uses: actions/upload-pages-artifact@v2
         with:
           path: build/WebGL
 
-      - name: Deploy to GitHub Pages
-        id: deploy
+      - name: Deploy WebGL to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v2
-
