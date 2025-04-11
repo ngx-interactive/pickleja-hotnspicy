@@ -14,21 +14,24 @@ public class Game_NextStep : MonoBehaviour
     [SerializeField] private Slider _progressSlider;
     [SerializeField] private GameObject[] _dots;
 
+    public string _currentScene = "ingredient";
+
     private void OnEnable()
     {
         _dots[0].SetActive(true);
         _dots[1].SetActive(false);
         _dots[2].SetActive(false);
+        _currentScene = "ingredient";
     }
 
-    public void ChangePage(string _page)
+    public void ChangePage()
     {
-        StartCoroutine(ChangeScene(_page));
+        StartCoroutine(ChangeScene());
     }
 
-    private IEnumerator ChangeScene(string _page)
+    private IEnumerator ChangeScene()
     {
-        switch(_page)
+        switch(_currentScene)
         {
             case "bread":
                 _progressSlider.value = 0;
@@ -36,6 +39,7 @@ public class Game_NextStep : MonoBehaviour
                 _ingredientSelection.SetActive(false);
                 _sauceSelection.SetActive(false);
                 _sandwichResults.SetActive(false);
+                _currentScene = "ingredient";
                 break;
             case "ingredient":
                 _progressSlider.value = 0.5f;
@@ -44,6 +48,7 @@ public class Game_NextStep : MonoBehaviour
                 _ingredientSelection.SetActive(true);
                 _sauceSelection.SetActive(false);
                 _sandwichResults.SetActive(false);
+                _currentScene = "sauce";
                 break;
             case "sauce":
                 _progressSlider.value = 1;
@@ -52,6 +57,7 @@ public class Game_NextStep : MonoBehaviour
                 _ingredientSelection.SetActive(false);
                 _sauceSelection.SetActive(true);
                 _sandwichResults.SetActive(false);
+                _currentScene = "results";
                 break;
             case "results":
                 _breadSelection.SetActive(false);
